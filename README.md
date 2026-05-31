@@ -25,6 +25,8 @@ static/
   price_list.jpg
 requirements.txt
 render.yaml
+Dockerfile
+.dockerignore
 ```
 
 ## Environment Variables
@@ -110,19 +112,30 @@ Expected response:
 
 Send a test message to your Instagram account, then check Render logs for the webhook payload. The `entry[].id` field is your `INSTAGRAM_BUSINESS_ACCOUNT_ID`.
 
-## Deploy to Render
+## Deploy to Render (Docker)
+
+This project includes a [`Dockerfile`](Dockerfile) for containerized deployment on Render.
 
 1. Push this repository to GitHub.
 2. In [Render](https://render.com/), create a **New Web Service** from your repo.
-3. Render detects `render.yaml` automatically, or set:
-   - **Build Command:** `pip install -r requirements.txt`
-   - **Start Command:** `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
+3. Render detects `render.yaml` automatically (`runtime: docker`). Or configure manually:
+   - **Environment:** Docker
+   - **Dockerfile Path:** `./Dockerfile`
 4. Add environment variables in the Render dashboard:
    - `META_VERIFY_TOKEN`
    - `META_PAGE_ACCESS_TOKEN`
    - `META_APP_SECRET`
    - `INSTAGRAM_BUSINESS_ACCOUNT_ID`
 5. Deploy. Render sets `RENDER_EXTERNAL_URL` automatically for image URLs.
+
+### Local Docker
+
+```bash
+docker build -t shree-annapure-bot .
+docker run --rm -p 8000:8000 --env-file .env -e PORT=8000 shree-annapure-bot
+```
+
+Test: `curl http://localhost:8000/health`
 
 ### Replace Placeholder Images
 
